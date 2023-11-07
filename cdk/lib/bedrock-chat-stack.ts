@@ -12,6 +12,7 @@ import { Database } from "./constructs/database";
 import { Frontend } from "./constructs/frontend";
 import { WebSocket } from "./constructs/websocket";
 import * as cdk from "aws-cdk-lib";
+import { Documents } from "./constructs/docs";
 
 export interface BedrockChatStackProps extends StackProps {
   readonly bedrockRegion: string;
@@ -33,12 +34,15 @@ export class BedrockChatStack extends cdk.Stack {
 
     const auth = new Auth(this, "Auth");
     const database = new Database(this, "Database");
+    const documents = new Documents(this, "Documents");
 
     const backendApi = new Api(this, "BackendApi", {
       database: database.table,
+      documents: documents.bucket,
       auth,
       bedrockRegion: props.bedrockRegion,
       tableAccessRole: database.tableAccessRole,
+      documentsAccessRole: documents.bucketAccessRole
     });
 
     // For streaming response

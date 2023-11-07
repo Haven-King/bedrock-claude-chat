@@ -15,6 +15,7 @@ from boto3.dynamodb.conditions import Key
 
 DDB_ENDPOINT_URL = os.environ.get("DDB_ENDPOINT_URL")
 TABLE_NAME = os.environ.get("TABLE_NAME", "")
+DOCUMENTS_BUCKET = os.environ.get("DOCUMENTS_BUCKET", "")
 ACCOUNT = os.environ.get("ACCOUNT", "")
 REGION = os.environ.get("REGION", "ap-northeast-1")
 TABLE_ACCESS_ROLE_ARN = os.environ.get("TABLE_ACCESS_ROLE_ARN", "")
@@ -97,6 +98,22 @@ def _get_table_client(user_id: str):
     )
     table = dynamodb.Table(TABLE_NAME)
     return table
+
+def _get_document_url(user_id: str, file_name: str):
+    s3_client = boto3.client('s3')
+
+    try:
+        url = s3_client.generate_presigned_url('put_object',
+            Params={
+                'Bucket': DOCUMENTS_BUCKET,
+                'Key': f"{user_id}/{file_name}"
+            },
+            ExpiresIn=3600)
+    except ClientError as e:
+        logger.error(e)
+        return None
+
+    return url
 
 
 def store_conversation(user_id: str, conversation: ConversationModel):

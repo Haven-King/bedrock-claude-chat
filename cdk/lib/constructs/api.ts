@@ -14,13 +14,16 @@ import { Platform } from "aws-cdk-lib/aws-ecr-assets";
 import { Stack } from "aws-cdk-lib";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as path from "path";
+import { IBucket } from "aws-cdk-lib/aws-s3";
 
 export interface ApiProps {
   readonly database: ITable;
+  readonly documents: IBucket;
   readonly corsAllowOrigins?: string[];
   readonly auth: Auth;
   readonly bedrockRegion: string;
   readonly tableAccessRole: iam.IRole;
+  readonly documentsAccessRole: iam.IRole;
 }
 
 export class Api extends Construct {
@@ -31,6 +34,8 @@ export class Api extends Construct {
     const {
       database,
       tableAccessRole,
+      documents,
+      documentsAccessRole,
       corsAllowOrigins: allowOrigins = ["*"],
     } = props;
 
@@ -68,6 +73,7 @@ export class Api extends Construct {
       timeout: Duration.seconds(30),
       environment: {
         TABLE_NAME: database.tableName,
+        DOCUMENTS_BUCKET: documents.bucketName,
         CORS_ALLOW_ORIGINS: allowOrigins.join(","),
         USER_POOL_ID: props.auth.userPool.userPoolId,
         CLIENT_ID: props.auth.client.userPoolClientId,
@@ -75,6 +81,7 @@ export class Api extends Construct {
         REGION: Stack.of(this).region,
         BEDROCK_REGION: props.bedrockRegion,
         TABLE_ACCESS_ROLE_ARN: tableAccessRole.roleArn,
+        DOCUMENTS_ACCESS_ROLE_ARN: documentsAccessRole.roleArn
       },
       role: handlerRole,
     });

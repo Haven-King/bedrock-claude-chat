@@ -35,6 +35,10 @@ const ChatPage: React.FC = () => {
     setContent('');
   }, [content, postChat]);
 
+  const onFile = useCallback((file: any) => {
+    console.log(file);
+  }, [])
+
   const onChangeCurrentMessageId = useCallback(
     (messageId: string) => {
       setCurrentMessageId(messageId);
@@ -117,6 +121,7 @@ const ChatPage: React.FC = () => {
           disabled={postingMessage}
           onChangeContent={setContent}
           onSend={onSend}
+          onFile={onFile}
           onRegenerate={onRegenerate}
         />
       </div>

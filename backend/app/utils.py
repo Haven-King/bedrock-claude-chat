@@ -40,3 +40,8 @@ def get_bedrock_client():
     client = boto3.client("bedrock-runtime", BEDROCK_REGION)
 
     return client
+
+def get_textract_client():
+    client = boto3.client("textract")
+
+    return client

@@ -5,6 +5,7 @@ import useChat from '../hooks/useChat';
 import Button from './Button';
 import { PiArrowsCounterClockwise } from 'react-icons/pi';
 import { useTranslation } from 'react-i18next';
+import ButtonAttach from './ButtonAttach';
 
 type Props = {
   content: string;
@@ -12,6 +13,7 @@ type Props = {
   placeholder?: string;
   onChangeContent: (content: string) => void;
   onSend: () => void;
+  onFile: (file: any) => void;
   onRegenerate: () => void;
 };
 
@@ -52,6 +54,12 @@ const InputChatContent: React.FC<Props> = (props) => {
     <div
       id="input-chat-content"
       className="relative mb-7 flex w-11/12 items-end rounded-xl border border-black/10 bg-white shadow-[0_0_30px_7px] shadow-gray-400/50 md:w-10/12 lg:w-4/6 xl:w-3/6">
+      <ButtonAttach
+        className="m-2 align-bottom"
+        disabled={false}
+        loading={postingMessage}
+        onFile={props.onFile}
+      />
       <Textarea
         className="m-2 -mr-14 bg-transparent pr-14 scrollbar-thin scrollbar-thumb-gray-200 "
         placeholder={props.placeholder ?? t('app.inputMessage')}

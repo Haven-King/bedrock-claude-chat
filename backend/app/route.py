@@ -121,3 +121,11 @@ def get_proposed_title(request: Request, conversation_id: str):
 
     title = propose_conversation_title(current_user.id, conversation_id)
     return ProposedTitle(title=title)
+
+@router.get(
+    "/conversation/{conversation_id}/attach/{file_name}", response_model=AttachFile
+)
+def get_attachment_url(request: Request, conversation_id: str, file_name: str):
+    url = _get_document_url(request.state.current_user, file_name)
+
+    return AttachFile(url=url)
